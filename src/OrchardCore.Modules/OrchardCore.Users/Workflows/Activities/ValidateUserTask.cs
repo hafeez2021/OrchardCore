@@ -33,11 +33,6 @@ public class ValidateUserTask : TaskActivity
             get => GetProperty(() => string.Empty);
             set => SetProperty(value);
         }
-        public bool SetUser
-        {
-            get => GetProperty(() => true);
-            set => SetProperty(value);
-        }
 
         public override LocalizedString DisplayText => T["Validate User Task"];
 
@@ -52,12 +47,6 @@ public class ValidateUserTask : TaskActivity
             var isAuthenticated = user?.Identity?.IsAuthenticated;
             if (isAuthenticated == true)
             {
-                if (SetUser)
-                {
-                    var userInfo = _userManager.GetUserAsync(user).GetAwaiter().GetResult();
-                    var email = _userManager.GetEmailAsync(userInfo).GetAwaiter().GetResult();
-                    workflowContext.Properties["User"] = new UserViewModel(){ Name = user.Identity.Name, Email = email };
-                }
                 if (!string.IsNullOrEmpty(RoleNames))
                 {
                     foreach(var role in RoleNames.Replace(" ","").Split(','))
@@ -68,12 +57,9 @@ public class ValidateUserTask : TaskActivity
                         }
                     }
                 }
-
                 return Outcomes("Authenticated");
             }
             return Outcomes("Anonymous");
         }
-
-
     }
 }
